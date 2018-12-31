@@ -22,7 +22,6 @@ main\java\creature\LeaderEnum.class
 main\java\environment\Game$6.class
 main\java\environment\SortController.class
 main\java\tools\GameLogger.class
-main\java\environment\Formation.class
 main\java\jfxgui\Mainwindow$6.class
 main\java\jfxgui\Mainwindow$5.class
 main\java\tools\ThreadOperation.class
