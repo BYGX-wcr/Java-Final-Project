@@ -12,10 +12,9 @@ public abstract class Fighter extends Creature {
     }
 
     public boolean attack(Creature obj) {
+        if (!alive) return false;
         synchronized (obj) {
-            ArrayList<Creature> enemy = new ArrayList<>();
-            enemy.add(obj);
-            world.behave(Game.Behavior.ATTACK, this, enemy);
+            world.behave(Game.Behavior.ATTACK, this, obj);
             return obj.hurt(atk);
         }
     }

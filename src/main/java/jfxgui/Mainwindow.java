@@ -1,11 +1,13 @@
 package main.java.jfxgui;
 
+import javafx.animation.FadeTransition;
 import javafx.animation.PathTransition;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
+import javafx.scene.effect.Bloom;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
@@ -185,20 +187,10 @@ public class Mainwindow implements Initializable {
     }
 
     public void atkEffect(int srcx, int srcy, int dstx, int dsty) {
-        //System.out.println("ATK EFFECT");
         ImageView sign = new ImageView(sword);
         backPane.getChildren().add(sign);
-        sign.setFitWidth(unitIconWidth * 0.5);
-        sign.setFitWidth(unitIconHeight * 0.5);
-        if (dsty > srcy) {
-            sign.setRotate(90);
-        }
-        else if (dstx > srcx) {
-            sign.setRotate(180);
-        }
-        else if (srcy > dsty) {
-            sign.setRotate(270);
-        }
+        sign.setFitWidth(unitIconWidth * 1);
+        sign.setFitHeight(unitIconHeight * 0.5);
 
         Path path = new Path();
         backPane.getChildren().add(path);
@@ -206,13 +198,45 @@ public class Mainwindow implements Initializable {
         path.getElements().add(new LineTo(transformPosX(dstx, srcy), transformPosY(dstx, dsty)));
 
         PathTransition pathTransition = new PathTransition();
-        pathTransition.setDuration(Duration.millis(4000));
+        pathTransition.setDuration(Duration.millis(500));
         pathTransition.setPath(path);
         pathTransition.setNode(sign);
         pathTransition.setOrientation(PathTransition.OrientationType.ORTHOGONAL_TO_TANGENT);
+        pathTransition.setCycleCount(1);
         pathTransition.play();
-        backPane.getChildren().remove(sign);
-        backPane.getChildren().remove(path);
+        pathTransition.setOnFinished(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                backPane.getChildren().remove(sign);
+                backPane.getChildren().remove(path);
+            }
+        });
+    }
+
+    public void enhanceEffect(int x, int y, Image buff) {
+        System.out.println("Enhance Effect");
+        ImageView sign = new ImageView(buff);
+        backPane.getChildren().add(sign);
+        sign.setFitWidth(unitIconWidth * 0.5);
+        sign.setFitHeight(unitIconHeight * 0.5);
+        sign.setLayoutX(transformPosX(x, y));
+        sign.setLayoutY(transformPosY(x, y) - unitIconHeight / 2.0);
+
+        Bloom bloom = new Bloom();
+        bloom.setThreshold(4);
+        sign.setEffect(bloom);
+
+        FadeTransition fadeTransition = new FadeTransition(Duration.millis(1000), sign);
+        fadeTransition.setFromValue(0);
+        fadeTransition.setToValue(3);
+        fadeTransition.setAutoReverse(true);
+        fadeTransition.play();
+        fadeTransition.setOnFinished(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                backPane.getChildren().remove(sign);
+            }
+        });
     }
 
     public double transformPosX(int x, int y) {

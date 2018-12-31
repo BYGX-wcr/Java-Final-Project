@@ -1,6 +1,7 @@
 package main.java.environment;
 
 import javafx.concurrent.Task;
+import javafx.scene.image.Image;
 import main.java.creature.*;
 import main.java.jfxgui.Mainwindow;
 
@@ -42,7 +43,7 @@ public class Game {
             huluwa[i].setCampId(Camp.GOOD);
             huluwa[i].setLife(120);
             huluwa[i].setAtk(30 + i);
-            String iconPath = getClass().getResource(resourcesPath + Integer.toString(i + 1) + ".png").toString();
+            String iconPath = getClass().getResource(resourcesPath + Integer.toString(huluwa[i].getNum() + 1) + ".png").toString();
             huluwa[i].setIcon(iconPath);
         }
 
@@ -74,14 +75,16 @@ public class Game {
         grandpa.setCampId(Camp.GOOD);
         grandpa.setLife(100);
         grandpa.setIcon(getClass().getResource( resourcesPath +"grandpa.png").toString());
-        grandpa.setBuff((obj -> { obj.setLife(obj.getLife() + 20); }));
+        grandpa.setBuff(obj -> { obj.setLife(obj.getLife() + 20); });
+        grandpa.setBuffSign(new Image(getClass().getResource(resourcesPath + "lifeup.png").toString()));
 
         //初始化蛇精：技能-加攻击力
         Leader snaker = Leader.getInstance(this, background, "蛇精");
         snaker.setCampId(Camp.BAD);
         snaker.setLife(120);
         snaker.setIcon(getClass().getResource(resourcesPath + "snaker.png").toString());
-        snaker.setBuff((obj -> { obj.setAtk(obj.getAtk() + 20); }));
+        snaker.setBuff(obj -> { obj.setAtk(obj.getAtk() + 20); });
+        snaker.setBuffSign(new Image(getClass().getResource(resourcesPath + "atkup.png").toString()));
 
         numOfGood = huluwa.length + 1;
         numOfBad = evils.length + 1;
@@ -134,7 +137,7 @@ public class Game {
         }).start();
     }
 
-    public void behave(Behavior type, Creature master, ArrayList<Creature> slaves) {
+    public void behave(Behavior type, Creature master, Creature slave) {
         switch (type) {
             case ATTACK: {
                 new Thread(new Task<Void>() {
@@ -145,7 +148,21 @@ public class Game {
 
                     @Override
                     public void succeeded() {
-                        view.atkEffect(master.getX(), master.getY(), slaves.get(0).getX(), slaves.get(0).getY());
+                        view.atkEffect(master.getX(), master.getY(), slave.getX(), slave.getY());
+                    }
+                }).start();
+                break;
+            }
+            case ENHACING: {
+                new Thread(new Task<Void>() {
+                    @Override
+                    public Void call() {
+                        return null;
+                    }
+
+                    @Override
+                    public void succeeded() {
+                        view.enhanceEffect(slave.getX(), slave.getY(), Leader.class.cast(master).getBuffSign());
                     }
                 }).start();
                 break;
@@ -160,7 +177,7 @@ public class Game {
                     numOfBad--;
                     if (numOfBad <= 0) {
                         //win
-                        System.out.println("Win:" + numOfBad + " : " + numOfGood);
+                        System.out.println("Win " + numOfBad + " : " + numOfGood);
                         background.destroy();
                         new Thread(new Task<Void>() {
                             @Override
@@ -181,7 +198,7 @@ public class Game {
                     numOfGood--;
                     if (numOfGood <= 0) {
                         //fail
-                        System.out.println("Defeat:" + numOfBad + " : " + numOfGood);
+                        System.out.println("Defeat " + numOfBad + " : " + numOfGood);
                         background.destroy();
                         new Thread(new Task<Void>() {
                             @Override

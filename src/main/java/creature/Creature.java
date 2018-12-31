@@ -11,7 +11,7 @@ import java.util.concurrent.locks.ReentrantLock;
 
 abstract public class Creature implements Runnable {
     static final int maxLife = 150;
-    static final int maxAtk = 100;
+    static final int maxAtk = 60;
     int x;
     int y;
 
@@ -49,6 +49,8 @@ abstract public class Creature implements Runnable {
     }
     @Nullable
     public Creature march() {
+        if (!alive) return this;
+
         final int c = groud.center();
         int dx = 1;
         int dy = 1;
@@ -127,7 +129,7 @@ abstract public class Creature implements Runnable {
         return alive;
     }
     public void kill() {
-        System.out.println("Kill " + name + " at " + "[" + x + "," + "]");
+        System.out.println("Kill " + name + " at " + "[" + x + "," + y + "]");
         alive = false;
     }
 

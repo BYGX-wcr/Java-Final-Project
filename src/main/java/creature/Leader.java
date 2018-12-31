@@ -1,5 +1,6 @@
 package main.java.creature;
 
+import javafx.scene.image.Image;
 import main.java.environment.Battlefield;
 import main.java.environment.Game;
 import org.jetbrains.annotations.Nullable;
@@ -24,6 +25,7 @@ enum LeaderEnum {
 public class Leader extends Creature {
     LeaderEnum id;
     Enhancing buff = null;
+    Image buffSign = null;
 
     private Leader(Game game, Battlefield bg, String argName) {
         super(game, bg, argName);
@@ -39,13 +41,17 @@ public class Leader extends Creature {
     public void setBuff(Enhancing skill) {
         buff = skill;
     }
+    public void setBuffSign(Image sign) { buffSign = sign; }
+    public Image getBuffSign() { return buffSign; }
 
     public void strengthen() {
+        if (!alive) return;
         for (int i = x - 1; i <= x +1; ++i) {
             for (int j = y - 1; j <= y + 1; ++j) {
                 Creature obj = groud.getCreature(i, j);
                 if (obj != this && obj != null && obj.getCampId() == campId) {
                     synchronized (obj) {
+                        world.behave(Game.Behavior.ENHACING, this, obj);
                         buff.enhance(obj);
                     }
                 }
