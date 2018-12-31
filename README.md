@@ -1,5 +1,5 @@
 # Java期末大作业说明文档
-
+![](documents/video.gif)
 ## 1 代码解析
 本项目中，我主要定义了4种类：生物类、环境元素类、GUI类、工具类、测试类，它们分别放在main.java.creature、main.java.environment、main.java.jfxgui、main.java.tools包和test.java包下。
 
