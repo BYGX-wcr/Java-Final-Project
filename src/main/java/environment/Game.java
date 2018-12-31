@@ -49,12 +49,12 @@ public class Game {
         //初始化反派战斗人员
         Monster[] evils = {
                 new Monster(this, background, "蝎子精"),
-                new Monster(this, background, "小喽啰"),
-                new Monster(this, background, "小喽啰"),
-                new Monster(this, background, "小喽啰"),
-                new Monster(this, background, "小喽啰"),
-                new Monster(this, background, "小喽啰"),
-                new Monster(this, background, "小喽啰"),
+                new Monster(this, background, "小喽啰1"),
+                new Monster(this, background, "小喽啰2"),
+                new Monster(this, background, "小喽啰3"),
+                new Monster(this, background, "小喽啰4"),
+                new Monster(this, background, "小喽啰5"),
+                new Monster(this, background, "小喽啰6"),
         };
         //单独设置蝎子精
         evils[0].setCampId(Camp.BAD);
@@ -198,7 +198,6 @@ public class Game {
                     }
                 }
             }
-            System.out.println(numOfBad + " : " + numOfGood);
         }
     }
 }

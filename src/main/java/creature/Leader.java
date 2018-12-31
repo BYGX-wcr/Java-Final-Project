@@ -43,12 +43,10 @@ public class Leader extends Creature {
     public void strengthen() {
         for (int i = x - 1; i <= x +1; ++i) {
             for (int j = y - 1; j <= y + 1; ++j) {
-                synchronized (groud) {
-                    Creature obj = groud.getCreature(i, j);
-                    if (obj != this && obj != null && obj.getCampId() == campId) {
-                        synchronized (obj) {
-                            buff.enhance(obj);
-                        }
+                Creature obj = groud.getCreature(i, j);
+                if (obj != this && obj != null && obj.getCampId() == campId) {
+                    synchronized (obj) {
+                        buff.enhance(obj);
                     }
                 }
             }
@@ -66,14 +64,25 @@ public class Leader extends Creature {
 
             Random rand = new Random(System.currentTimeMillis());
             int prob = rand.nextInt(10);
-            if (prob < 3) {
-                strengthen();
-                changeWorld();
+            groud.startOpt();
+            try {
+                if (prob < 3) {
+                    strengthen();
+                }
             }
+            finally {
+                groud.endOpt();
+            }
+            changeWorld();
 
-            if (march() == null) {
-                changeWorld();
+            groud.startOpt();
+            try {
+                march();
             }
+            finally {
+                groud.endOpt();
+            }
+            changeWorld();
             Thread.yield();
         }
     }

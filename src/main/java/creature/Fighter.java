@@ -24,21 +24,27 @@ public abstract class Fighter extends Creature {
         while (alive) {
             try {
                 Thread.sleep(world.timeGap);
-            }
-            catch (InterruptedException ie) {
+            } catch (InterruptedException ie) {
                 alive = false;
             }
 
-            Creature obj = march();
-            if (obj != null) {
-                if (obj.getCampId() != campId) {
-                    attack(obj);
-                    changeWorld();
+            groud.startOpt();
+            try {
+                synchronized (this) {
+                    march();
+                    int dx = (campId == Game.Camp.GOOD) ? 1 : -1;
+                    if (groud.getCreature(x + dx, y) != null && groud.getCreature(x + dx, y).getCampId() != campId)
+                        attack(groud.getCreature(x + dx, y));
+                    else if (groud.getCreature(x, y + 1) != null && groud.getCreature(x, y + 1).getCampId() != campId)
+                        attack(groud.getCreature(x, y + 1));
+                    else if (groud.getCreature(x, y - 1) != null && groud.getCreature(x, y - 1).getCampId() != campId)
+                        attack(groud.getCreature(x, y - 1));
                 }
             }
-            else {
-                changeWorld();
+            finally {
+                groud.endOpt();
             }
+            changeWorld();
             Thread.yield();
         }
     }

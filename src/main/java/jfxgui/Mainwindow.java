@@ -87,11 +87,16 @@ public class Mainwindow implements Initializable {
     }
     public void update(Battlefield bg) {
         clearIcons();
-        synchronized (bg) {
+        bg.startOpt();
+        try {
             for (int x = 0; x < bg.getSize(); ++x) {
                 for (int y = 0; y < bg.getSize(); ++y) {
                     Creature obj = bg.getCreature(x, y);
                     if (obj != null) {
+                        if (obj.getLife() == 0) {
+                            bg.clear(obj);
+                            continue;
+                        }
                         //存在生物，绘制它的图像
                         VBox iconBox = new VBox();
                         icons.add(iconBox);
@@ -113,8 +118,7 @@ public class Mainwindow implements Initializable {
                         image.setFitHeight(unitIconHeight);
                         image.setFitWidth(unitIconWidth);
                         iconBox.getChildren().add(image);
-                    }
-                    else if (bg.existCorpse(x, y)) {
+                    } else if (bg.existCorpse(x, y)) {
                         //存在尸体，绘制墓碑
                         VBox iconBox = new VBox();
                         icons.add(iconBox);
@@ -133,6 +137,9 @@ public class Mainwindow implements Initializable {
                     }
                 }
             }
+        }
+        finally {
+            bg.endOpt();
         }
     }
 

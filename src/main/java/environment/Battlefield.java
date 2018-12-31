@@ -44,6 +44,14 @@ public class Battlefield {
     public void clear(int x, int y) {
         matrix[x][y].setConetnt(null);
     }
+    public void clear(Creature ref) {
+        for (int i = 0; i < size; ++i) {
+            for (int j = 0; j < size; ++j) {
+                if (matrix[i][j].getConetnt() == ref)
+                    matrix[i][j].setConetnt(null);
+            }
+        }
+    }
     public void destroy() {
         for (int i = 0; i < size; ++i) {
             for (int j = 0; j < size; ++j) {

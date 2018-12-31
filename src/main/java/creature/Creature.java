@@ -6,8 +6,12 @@ import main.java.environment.Game;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Random;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 abstract public class Creature implements Runnable {
+    static final int maxLife = 150;
+    static final int maxAtk = 100;
     int x;
     int y;
 
@@ -20,6 +24,8 @@ abstract public class Creature implements Runnable {
 
     final Battlefield groud;
     final Game world;
+
+    Lock optLock = new ReentrantLock();
 
     public Creature(Game game, Battlefield bg, String str) {
         x = y = 0;
@@ -36,9 +42,7 @@ abstract public class Creature implements Runnable {
     }
     public void move(int arg1, int arg2) {
         //System.out.println(name + " move to " + "[" + arg1 + "," + arg2 + "]");
-        if (groud.getCreature(x, y) == this) {
-            groud.clear(x, y);
-        }
+        groud.clear(this);
         x = arg1;
         y = arg2;
         groud.setCreature(this);
@@ -46,8 +50,16 @@ abstract public class Creature implements Runnable {
     @Nullable
     public Creature march() {
         final int c = groud.center();
-        int dx = (c - x) > 0 ? 1 : -1;
-        int dy = (c - y) > 0 ? 1 : -1;
+        int dx = 1;
+        int dy = 1;
+        if (c > x)
+            dx = 1;
+        else if (c < x)
+            dx = -1;
+        if (c > y)
+            dy = 1;
+        else if (c < y)
+            dy = -1;
 
         Random rand = new Random(System.currentTimeMillis());
         int direction = rand.nextInt() % 2;
@@ -69,21 +81,27 @@ abstract public class Creature implements Runnable {
         }
 
         //如果目标位置没人则进入位置，否则返回
-        synchronized (groud) {
-            Creature obstacle = groud.getCreature(nx, ny);
-            if (obstacle != null) {
-                return obstacle;
-            } else {
-                move(nx, ny);
-                return null;
-            }
+        Creature obstacle = groud.getCreature(nx, ny);
+        if (obstacle != null) {
+            return obstacle;
+        } else {
+            move(nx, ny);
+            return null;
         }
     }
 
     public void setLife(int arg) {
-        life = arg;
+        if (arg > maxLife)
+            life = maxLife;
+        else
+            life = arg;
     }
-    public void setAtk(int arg) { atk = arg; }
+    public void setAtk(int arg) {
+        if (arg > maxAtk)
+            atk = maxAtk;
+        else
+            atk = arg;
+    }
     public void setCampId(Game.Camp arg) {
         campId = arg;
     }
@@ -91,23 +109,25 @@ abstract public class Creature implements Runnable {
         icon = new Image(path);
     }
     public boolean hurt(int value) {
-        if (alive == false) return false;
+        if (alive == false) {
+            groud.clear(this);
+            return false;
+        }
         life -= value;
 
         if (life <= 0) {
             alive = false;
-            synchronized (groud) {
-                System.out.println(name + " die at [" + x + "," + y + "]");
-                groud.clear(x, y);
-                groud.leaveCorpse(x, y);
-                world.decNum(campId);
-            }
+            System.out.println(name + " die at [" + x + "," + y + "]");
+            groud.clear(this);
+            groud.leaveCorpse(x, y);
+            world.decNum(campId);
             life = 0;
         }
 
         return alive;
     }
     public void kill() {
+        System.out.println("Kill " + name + " at " + "[" + x + "," + "]");
         alive = false;
     }
 
@@ -121,4 +141,5 @@ abstract public class Creature implements Runnable {
     public int getAtk() { return atk; }
     public Game.Camp getCampId() { return campId; }
     public Image getIcon() { return icon; }
+    public String getName() { return name; }
 }
