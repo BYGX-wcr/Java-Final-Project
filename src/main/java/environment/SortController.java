@@ -6,10 +6,6 @@ public class SortController {
     //Sort Calabash Brothers by Quick-sort Algorithm based on color
     public static void sort(CalabashBrother[] huluwa){
         quickSort(huluwa, 0, huluwa.length - 1);
-
-        for (CalabashBrother it : huluwa) {
-        }
-        System.out.print('\n');
     }
 
     //Execute a recursion process
@@ -25,8 +21,6 @@ public class SortController {
 
                 CalabashBrother obj1 = huluwa[i];
                 CalabashBrother obj2 = huluwa[mid];
-                obj1.displayMov(i, mid);
-                obj2.displayMov(mid, i);
                 obj1.moveTo(huluwa, mid);
                 obj2.moveTo(huluwa, i);
             }
@@ -35,8 +29,6 @@ public class SortController {
         if (mid != pivot) {
             CalabashBrother obj1 = huluwa[pivot];
             CalabashBrother obj2 = huluwa[mid];
-            obj1.displayMov(pivot, mid);
-            obj2.displayMov(mid, pivot);
             obj1.moveTo(huluwa, mid);
             obj2.moveTo(huluwa, pivot);
         }

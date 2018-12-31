@@ -3,7 +3,9 @@ package main.java.creature;
 import javafx.scene.image.Image;
 import main.java.environment.Battlefield;
 import main.java.environment.Game;
-import org.jetbrains.annotations.Nullable;
+import main.java.tools.AtomicOperation;
+import main.java.tools.GameLogger;
+import main.java.tools.ThreadOperation;
 
 import java.util.Random;
 import java.util.concurrent.locks.Lock;
@@ -40,14 +42,15 @@ abstract public class Creature implements Runnable {
     public void changeWorld() {
         world.updateView();
     }
+    @AtomicOperation(type = GameLogger.AtomicOptType.MOVE)
     public void move(int arg1, int arg2) {
-        //System.out.println(name + " move to " + "[" + arg1 + "," + arg2 + "]");
+        world.outputRecord(name + GameLogger.AtomicOptType.MOVE.getStr() + x + "," + y);
         groud.clear(this);
         x = arg1;
         y = arg2;
         groud.setCreature(this);
     }
-    @Nullable
+    @ThreadOperation
     public Creature march() {
         if (!alive) return this;
 
@@ -119,7 +122,6 @@ abstract public class Creature implements Runnable {
 
         if (life <= 0) {
             alive = false;
-            System.out.println(name + " die at [" + x + "," + y + "]");
             groud.clear(this);
             groud.leaveCorpse(x, y);
             world.decNum(campId);
@@ -129,7 +131,6 @@ abstract public class Creature implements Runnable {
         return alive;
     }
     public void kill() {
-        System.out.println("Kill " + name + " at " + "[" + x + "," + y + "]");
         alive = false;
     }
 

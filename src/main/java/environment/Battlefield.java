@@ -1,7 +1,6 @@
 package main.java.environment;
 
 import main.java.creature.*;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -34,7 +33,6 @@ public class Battlefield {
 
         matrix[x][y].setConetnt(object);
     }
-    @Nullable
     public Creature getCreature(int x, int y) {
         if (x < 0 || x >= size || y < 0 || y >= size)
             return null;

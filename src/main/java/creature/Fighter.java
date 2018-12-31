@@ -2,8 +2,9 @@ package main.java.creature;
 
 import main.java.environment.Battlefield;
 import main.java.environment.Game;
-
-import java.util.ArrayList;
+import main.java.tools.AtomicOperation;
+import main.java.tools.GameLogger;
+import main.java.tools.ThreadOperation;
 
 public abstract class Fighter extends Creature {
 
@@ -11,11 +12,32 @@ public abstract class Fighter extends Creature {
         super(game, bg, argName);
     }
 
-    public boolean attack(Creature obj) {
-        if (!alive) return false;
+    @AtomicOperation(type = GameLogger.AtomicOptType.ATK, operatorType = Fighter.class)
+    public void attack(Creature obj) {
+        if (!alive) return;
         synchronized (obj) {
+            world.outputRecord(name + GameLogger.AtomicOptType.ATK.getStr() + obj.getName());
+            obj.hurt(atk);
+        }
+    }
+
+    @ThreadOperation(operatorType = Fighter.class)
+    public void tour() {
+        int dx = (campId == Game.Camp.GOOD) ? 1 : -1;
+        if (groud.getCreature(x + dx, y) != null && groud.getCreature(x + dx, y).getCampId() != campId) {
+            Creature obj = groud.getCreature(x + dx, y);
             world.behave(Game.Behavior.ATTACK, this, obj);
-            return obj.hurt(atk);
+            attack(obj);
+        }
+        else if (groud.getCreature(x, y + 1) != null && groud.getCreature(x, y + 1).getCampId() != campId) {
+            Creature obj = groud.getCreature(x, y + 1);
+            world.behave(Game.Behavior.ATTACK, this, obj);
+            attack(obj);
+        }
+        else if (groud.getCreature(x, y - 1) != null && groud.getCreature(x, y - 1).getCampId() != campId) {
+            Creature obj = groud.getCreature(x, y - 1);
+            world.behave(Game.Behavior.ATTACK, this, obj);
+            attack(obj);
         }
     }
 
@@ -31,13 +53,7 @@ public abstract class Fighter extends Creature {
             try {
                 synchronized (this) {
                     march();
-                    int dx = (campId == Game.Camp.GOOD) ? 1 : -1;
-                    if (groud.getCreature(x + dx, y) != null && groud.getCreature(x + dx, y).getCampId() != campId)
-                        attack(groud.getCreature(x + dx, y));
-                    else if (groud.getCreature(x, y + 1) != null && groud.getCreature(x, y + 1).getCampId() != campId)
-                        attack(groud.getCreature(x, y + 1));
-                    else if (groud.getCreature(x, y - 1) != null && groud.getCreature(x, y - 1).getCampId() != campId)
-                        attack(groud.getCreature(x, y - 1));
+                    tour();
                 }
             }
             finally {

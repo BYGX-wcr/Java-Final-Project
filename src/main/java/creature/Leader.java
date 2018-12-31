@@ -3,7 +3,9 @@ package main.java.creature;
 import javafx.scene.image.Image;
 import main.java.environment.Battlefield;
 import main.java.environment.Game;
-import org.jetbrains.annotations.Nullable;
+import main.java.tools.AtomicOperation;
+import main.java.tools.GameLogger;
+import main.java.tools.ThreadOperation;
 
 import java.util.Random;
 
@@ -44,6 +46,12 @@ public class Leader extends Creature {
     public void setBuffSign(Image sign) { buffSign = sign; }
     public Image getBuffSign() { return buffSign; }
 
+    @AtomicOperation(type = GameLogger.AtomicOptType.ENHANCE, operatorType = Leader.class)
+    public void enhance(Creature obj) {
+        world.outputRecord(name + GameLogger.AtomicOptType.ENHANCE.getStr() + obj.getName());
+        buff.enhance(obj);
+    }
+    @ThreadOperation(operatorType = Leader.class)
     public void strengthen() {
         if (!alive) return;
         for (int i = x - 1; i <= x +1; ++i) {
@@ -52,7 +60,7 @@ public class Leader extends Creature {
                 if (obj != this && obj != null && obj.getCampId() == campId) {
                     synchronized (obj) {
                         world.behave(Game.Behavior.ENHACING, this, obj);
-                        buff.enhance(obj);
+                        enhance(obj);
                     }
                 }
             }
@@ -94,7 +102,6 @@ public class Leader extends Creature {
     }
 
     //Factory Method
-    @Nullable
     public static Leader getInstance(Game game, Battlefield bg, String name) {
         Leader newMember = new Leader(game, bg, name);
         if (newMember.id == null) {

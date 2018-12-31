@@ -15,11 +15,13 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.*;
+import javafx.stage.FileChooser;
 import javafx.util.Duration;
 import main.java.creature.Creature;
 import main.java.environment.Battlefield;
 import main.java.environment.Game;
 
+import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
@@ -34,6 +36,7 @@ public class Mainwindow implements Initializable {
 
     Game mainGame;
     private final String resourcesPath = "../../resources/";
+    private final String logPath = "log/";
 
     final int unitIconWidth = 50;
     final int unitIconHeight = 50;
@@ -66,12 +69,23 @@ public class Mainwindow implements Initializable {
     public void startGame() {
         setInitSection(false);
 
-        mainGame = new Game(this, resourcesPath);
-        mainGame.start();
+        mainGame = new Game(resourcesPath, logPath);
+        mainGame.start(this);
     }
 
     public void replayGame() {
-        setInitSection(false);
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("打开游戏记录");
+        fileChooser.setInitialDirectory(new File(logPath));
+        fileChooser.getExtensionFilters().addAll(
+                new FileChooser.ExtensionFilter("游戏记录文档", "*.log")
+        );
+        File selectedFile = fileChooser.showOpenDialog(backPane.getScene().getWindow());
+        if (selectedFile != null) {
+            setInitSection(false);
+            mainGame = new Game(resourcesPath, logPath);
+            mainGame.replay(this, selectedFile.getAbsolutePath());
+        }
     }
 
     private void setInitSection(boolean flag) {
@@ -145,6 +159,11 @@ public class Mainwindow implements Initializable {
         }
     }
 
+    public void renewWindow() {
+        for (int i = 0; i < icons.size(); ++i) {
+        }
+    }
+
     public void win() {
         ImageView image = new ImageView();
         Image victory = new Image(getClass().getResource(resourcesPath + "victory.png").toString());
@@ -214,7 +233,6 @@ public class Mainwindow implements Initializable {
     }
 
     public void enhanceEffect(int x, int y, Image buff) {
-        System.out.println("Enhance Effect");
         ImageView sign = new ImageView(buff);
         backPane.getChildren().add(sign);
         sign.setFitWidth(unitIconWidth * 0.5);
