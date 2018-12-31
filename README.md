@@ -4,7 +4,7 @@
 本项目中，我主要定义了4种类：生物类、环境元素类、GUI类、工具类、测试类，它们分别放在main.java.creature、main.java.environment、main.java.jfxgui、main.java.tools包和test.java包下。
 
 项目结构图如下所示：
-- ![](documents/directory.png)
+![](documents/directory.png)
 ### 1.1 生物类
 #### 1.1.1 Class Creature
 - 这是所有生物类的基类，同时也是一个抽象类。它描述了生物的一些基本属性（数据成员），还定义了许多生物的基本行为（方法）。
