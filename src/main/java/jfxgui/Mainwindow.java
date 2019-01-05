@@ -35,8 +35,8 @@ public class Mainwindow implements Initializable {
     public ArrayList<VBox> icons = new ArrayList<>();
 
     Game mainGame;
-    private final String resourcesPath = "../../resources/";
-    private final String logPath = "log/";
+    private final String resourcesPath = "/";
+    private final String logPath = "./";
 
     final int unitIconWidth = 50;
     final int unitIconHeight = 50;
@@ -51,6 +51,7 @@ public class Mainwindow implements Initializable {
     final Image sword = new Image(getClass().getResource(resourcesPath + "sword.png").toString());
 
     public void initialize(URL location, ResourceBundle resources) {
+        backGroundImage.setImage(new Image(getClass().getResource(resourcesPath + "background.jpg").toString()));
         startButon.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {

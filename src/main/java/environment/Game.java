@@ -45,6 +45,7 @@ public class Game {
         File logFile = new File(logPath + System.currentTimeMillis() + ".log");
         try {
             logFile.createNewFile();
+            System.out.println("Game record is saved in " + logFile.getAbsolutePath());
         }
         catch (IOException ioe) {
             System.err.println("Cannot create log file");
@@ -130,13 +131,14 @@ public class Game {
         exec.shutdown();
     }
 
-    //The function used to repaly a game
+    //The function used to replay a game
     public void replay(Mainwindow scene, String filename) {
         //绑定controller
         view = scene;
 
         //初始化Log文件和Logger
         File logFile = new File(filename);
+        System.out.println("Read game record " + logFile.getAbsolutePath());
         gameLogger.initialize(GameLogger.READ_LOG, logFile);
 
         //初始化葫芦娃
