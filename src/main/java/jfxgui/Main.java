@@ -9,7 +9,7 @@ import javafx.stage.Stage;
 public class Main extends Application {
 
     public void start(Stage stage) throws Exception {
-        Parent root = FXMLLoader.load(getClass().getResource("mainwindow.fxml"));
+        Parent root = FXMLLoader.load(getClass().getResource("/mainwindow.fxml"));
         Scene scene = new Scene(root, 1400, 720);
 
         stage.setTitle("Java Final Project Application");

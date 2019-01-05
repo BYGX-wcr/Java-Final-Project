@@ -73,9 +73,9 @@ public class GameLogger {
         synchronized (this) {
             try {
                 logWriter.close();
-            } catch (IOException ioe) {
+            } catch (Exception e) {
                 System.err.println("End Write Log Error!");
-                ioe.printStackTrace();
+                e.printStackTrace();
             }
         }
         logWriter = null;
